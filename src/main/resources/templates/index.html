@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:replace="~{fragments/header :: header}">
+</head>
+<body>
+<!-- Page Content -->
+<div class="container blog-content-container">
+
+    <div class="row">
+
+        <!-- Blog Entries Column -->
+        <div class="col-md-8">
+            <!--工具栏-->
+            <ul class="nav nav-tabs mr-auto">
+                <form class="form-inline mt-2 mt-md-0">
+                    <select id="indexorder" th:value="${indexorder}" class="form-control mr-sm-2" data-placeholder="排序">
+                        <option>new</option>
+                        <option>hot</option>
+                    </select>
+                    <select id="indexlocation" th:value="${indexlocation}" class="form-control mr-sm-2" data-placeholder="请选择地点">
+                        <option>全部</option>
+                        <option>罗湖</option>
+                        <option>福田</option>
+                    </select>
+                    <select id="indextags" th:value="${indextags}" class="form-control mr-sm-2" data-placeholder="取件/送件">
+                        <option>全部</option>
+                        <option>请人取</option>
+                        <option>帮人取</option>
+                    </select>
+                    <div id="sandbox-container">
+                        取件日期：
+                        <input  id="indexdate" th:value="${indexdate}" type="text" class="form-control mr-sm-2">
+                    </div>
+                    <input class="form-control mr-sm-2 col-lg-2" type="text" placeholder="搜索" id="indexkeyword" th:value="${indexkeyword}">
+                    <a href="javascript:void(0)" class="btn btn-outline-secondary my-2 my-sm-0" id="indexsearch"><i class="fa fa-search"
+                                                                                                                    aria-hidden="true"></i></a>
+                </form>
+
+            </ul>
+            <!--推送列表-->
+            <div id="mainContainer">
+                <div id="mainContainerRepleace">
+                    <div class="card mb-4" th:each="blog : ${blogList}">
+                        <div class="card-block">
+                            <h2 class="card-title">
+			                    <span>
+			                      <a href="/u/Gin" title="Gin" th:href="'/u/' + ${blog.username}"  th:title="${blog.username}">
+			                        <img src="/images/doggy.jpg" th:src="${blog.avatar} == null ? '/images/doggy.jpg' : ${blog.avatar}"  class="blog-avatar-50">
+			                      </a>
+			                    </span>
+                                <a href="/u/Gin/blogs/1" class="card-link" title="Gin"
+                                   th:href="'/u/' + ${blog.username} + '/blogs/'+ ${blog.blogId}"  th:title="${blog.title}" th:text="${blog.title}">
+                                    OAuth 2.0 认证的原理与实践
+                                </a>
+                            </h2>
+                            <p class="card-text" th:text="${blog.summary}">使用 OAuth 2.0 认证的的好处是显然易见的。你只需要用同一个账号密码，就能在各个网站进行访问，而免去了在每个网站都进行注册的繁琐过程。 本文将介绍
+                                OAuth 2.0 的原理，并基于 Spring Security 和 GitHub 账号，来演示 OAuth 2.0 的认证的过程。</p>
+                            <div class="card-text">
+                                <a href="/u/Gin" th:href="'/u/' + ${blog.username}" class="card-link" th:text=${blog.username}>Gin</a> 发表于 [[${#dates.format(blog.createTime, 'yyyy-MM-dd HH:mm')}]] <i class="fa fa-eye" aria-hidden="true">[[${blog.readSize}]]</i>
+                                <i class="fa fa-heart-o" aria-hidden="true">[[${blog.voteSize}]]</i> <i class="fa fa-comment-o"
+                                                                                                        aria-hidden="true">[[${blog.commentSize}]]</i>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:replace="~{fragments/page :: page}">...</div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- 右侧栏目 -->
+        <div class="col-md-4">
+            <div>
+                <!-- 热门用户 -->
+                <div class="card my-4">
+                    <h5 class="card-header"><i class="fa fa-users" aria-hidden="true"></i> 热门用户</h5>
+                    <div class="card-block">
+                        <div class="row">
+                            <div class="col-lg-12">
+								 <span th:each="user: ${users}" th:object="${user}">
+								  <a href="/u/Gin" th:href="'/u/' + *{username}" title="Gin" th:title="*{username}">
+								    <img src="/images/avatar-defualt.jpg" th:src="*{avatar} == null ? '/images/doggy.jpg' : *{avatar}" class="blog-avatar-50">
+								  </a>
+								</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 热门文章 -->
+                <div class="card my-4">
+                    <h5 class="card-header"><i class="fa fa-fire" aria-hidden="true"></i> 热门文章</h5>
+
+                    <ul class="list-group" th:each="hotblog , hotblogStat : ${hotest}" th:object="${hotblog}">
+                        <a  th:href="'/u/'+*{username} +'/blogs/'+ *{blogId}" class="list-group-item">
+                            [[*{title}]]<span class="badge badge-pill" th:classappend="${hotblogStat.index} eq 0 ? 'badge-danger': (${hotblogStat.index} eq 1 ? 'badge-warning':(${hotblogStat.index} eq 2 ? 'badge-info':'badge-default'))">[[*{readSize}]]</span>
+                        </a>
+                    </ul>
+
+                </div>
+
+                <!-- 最新发布 -->
+                <div class="card my-4">
+                    <h5 class="card-header"><i class="fa fa-line-chart" aria-hidden="true"></i> 最新发布</h5>
+                    <div class="list-group">
+                        <ul class="list-group" th:each="newblog : ${newest}" th:object="${newblog}">
+                            <a  th:href="'/u/'+*{username} +'/blogs/'+ *{blogId}" class="list-group-item" th:text="*{title}">
+                            </a>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <!-- /.row -->
+
+</div>
+<!-- /.container -->
+
+
+<div th:replace="~{fragments/footer :: footer}">...</div>
+
+<!-- JavaScript -->
+<script src="../../js/index.js" th:src="@{/js/index.js}"></script>
+<script>
+    $('#sandbox-container input').datepicker({
+        language: "zh-CN",
+        format:"yyyy-mm-dd"
+    })
+</script>
+</body>
+</html>

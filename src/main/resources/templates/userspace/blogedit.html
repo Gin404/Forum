@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:replace="~{fragments/header :: header}">
+</head>
+<body>
+<style type="text/css">
+ 
+    @import "/css/emoji/nature.css";
+    @import "/css/emoji/object.css";
+    @import "/css/emoji/people.css";
+    @import "/css/emoji/place.css";
+    @import "/css/emoji/Sysmbols.css";
+    @import "/css/emoji/twemoji.css";
+ 
+</style>
+<!-- Page Content -->
+<div class="container blog-content-container">
+
+    <div class="row">
+
+        <!-- Blog Entries Column -->
+        <div class="col-md-8">
+
+            <!-- Blog Post -->
+            <div class="card mb-4">
+                <div class="card-block" th:object="${blogModel.blog}">
+                    <input type="hidden" name="id" th:value="*{id}" id="blogId">
+                    <input  type="text" class="form-control" placeholder="Title"  id="title" name="title"  th:value="*{title}"  maxlength="50">
+
+                    <textarea class="blog-textarea" placeholder="WeChat(optional)"  id="summary" name="summary"  th:text="*{summary}" maxlength="300"></textarea>
+
+                    <hr>
+                    <textarea id="md" data-provide="markdown" data-hidden-buttons="cmdImage" name="content"  th:text="*{content}"></textarea>
+
+                    <hr>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- 右侧栏目 -->
+        <div class="col-md-4">
+            <div>
+
+                <!-- 图片上传 -->
+                <div class="card ">
+                    <h5 class="card-header"><i class="fa fa-file-image-o" aria-hidden="true"></i> 图片上传</h5>
+                    <div class="card-block">
+                        <div class="row mt-1">
+                            <div  class="col-lg-12">
+
+                                <form  enctype="multipart/form-data"  id="uploadformid"  >
+                                    <input type="file" name="file" accept="image/png,image/gif,image/jpeg" id="file">
+                                    <button class="btn btn-outline-primary float-right"  type="button" id="uploadImage" >插入</button>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 博客设置 -->
+                <div class="card ">
+                    <h5 class="card-header"><i class="fa fa-cog" aria-hidden="true"></i> 基本信息（必填）</h5>
+                    <div class="card-block">
+                        <div class="row mt-1">
+                            <div  class="col-lg-12">
+                                帮人取/请人取： 					<select id="tags" class="selectpicker btn-info" data-placeholder="请选择">
+                                <option>帮人取</option>
+                                <option>请人取</option>
+                            </select>
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div  class="col-lg-12">
+                                取件地点：					<select id="location" class="selectpicker btn-info" data-placeholder="请选择">
+                                <option>罗湖</option>
+                                <option>福田</option>
+                            </select>
+                            </div>
+                        </div>
+
+                        <div class="row mt-1">
+                            <div class="col-lg-12" id="sandbox-container">
+                                取件日期：
+                                <input  id="date" type="text" class="form-control form-control-date" required="required">
+                            </div>
+                        </div>
+
+                        <div class="row mt-1">
+                            <div  class="col-lg-12">
+                                <button class="btn btn-outline-primary float-right" id="submitBlog"  th:attr="userName=${#authentication.name}">发布</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- /.row -->
+
+</div>
+<!-- /.container -->
+
+
+<div th:replace="~{fragments/footer :: footer}">...</div>
+
+
+<!-- JavaScript -->
+<script th:inline="javascript">
+    var fileServerUrl = [[${blogModel.fileServerUrl}]];
+</script>
+<script src="../../js/userspace/blogedit.js" th:src="@{/js/userspace/blogedit.js}"></script>
+
+
+<script>
+    $('#sandbox-container input').datepicker({
+        language: "zh-CN",
+        format:"yyyy-mm-dd"
+    })
+</script>
+ 
+</body>
+</html>
